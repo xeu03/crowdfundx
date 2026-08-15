@@ -10,20 +10,17 @@
 | Checklist item | Link |
 | --- | --- |
 | Public GitHub repository | https://github.com/xeu03/crowdfundx |
-| Live demo (Vercel/Netlify) | *— to be filled —* |
+| Live demo (Vercel/Netlify) | https://aquamarine-semolina-ff4c7e.netlify.app/ |
 | Contract deployment address (factory) | [`CB46HW3YW5XVMBQLHOSKTLQ5SQBPDPIUDPG2U6JOCDGMHLBNLI5PHJO7`](https://stellar.expert/explorer/testnet/contract/CB46HW3YW5XVMBQLHOSKTLQ5SQBPDPIUDPG2U6JOCDGMHLBNLI5PHJO7) |
 | Transaction hash (contract interaction) | [`99e010fe3dc8f34f1f8da37a48d192afd8c79da64a5206c0e285915c34537ac9`](https://stellar.expert/explorer/testnet/tx/99e010fe3dc8f34f1f8da37a48d192afd8c79da64a5206c0e285915c34537ac9) (contribution hitting the goal) |
 
 ## Screenshots
 
-Drop screenshots into `docs/screenshots/` and replace the placeholders below:
+![CrowdfundX home](docs/screenshots/home.png)
 
-| What | Screenshot |
-| --- | --- |
-| App UI (desktop) | *— to be filled —* |
-| Mobile responsive UI | *— to be filled —* |
-| CI/CD pipeline running | *— to be filled —* |
-| Test output (3+ passing tests) | *— to be filled —* |
+![Campaign detail](docs/screenshots/campaign.png)
+
+![Live demo](docs/screenshots/live.png)
 
 <!-- ════════════════════════════════════════════════════════════════════════════════════ -->
 
