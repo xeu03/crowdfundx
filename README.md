@@ -2,8 +2,8 @@
 
 > **Level 3 — Orange Belt Submission**
 > A production-ready, end-to-end Stellar dApp: three Soroban smart contracts with
-> inter-contract communication, live event streaming, a mobile-responsive React
-> frontend, full test suites, and CI/CD pipelines.
+> inter-contract communication, live event streaming, a React frontend,
+> full test suites, and CI/CD pipelines.
 
 <!-- ═══════════════════ Submission links (fill in before submitting) ═══════════════════ -->
 
@@ -13,7 +13,6 @@
 | Live demo (Vercel/Netlify) | *— to be filled —* |
 | Contract deployment address (factory) | [`CB46HW3YW5XVMBQLHOSKTLQ5SQBPDPIUDPG2U6JOCDGMHLBNLI5PHJO7`](https://stellar.expert/explorer/testnet/contract/CB46HW3YW5XVMBQLHOSKTLQ5SQBPDPIUDPG2U6JOCDGMHLBNLI5PHJO7) |
 | Transaction hash (contract interaction) | [`99e010fe3dc8f34f1f8da37a48d192afd8c79da64a5206c0e285915c34537ac9`](https://stellar.expert/explorer/testnet/tx/99e010fe3dc8f34f1f8da37a48d192afd8c79da64a5206c0e285915c34537ac9) (contribution hitting the goal) |
-| Demo video (1–2 min) | *— to be filled —* |
 
 <!-- ════════════════════════════════════════════════════════════════════════════════════ -->
 
@@ -73,7 +72,6 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for contract-level details an
 | Event streaming & real-time updates | `#[contractevent]` events on every action; `useEventStream` cursor-paginated polling, auto-reconnect |
 | CI/CD pipeline | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) + [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) |
 | Deployment workflow | [`scripts/deploy.sh`](scripts/deploy.sh) + GitHub Actions deploy job |
-| Mobile responsive frontend | Mobile-first CSS (1-col → 2-col → 3-col + desktop side rail) |
 | Error handling & loading states | ErrorBoundary, toast system, skeleton loaders, per-action busy states, RPC retries |
 | Tests for contracts & frontend | 24 Rust integration tests (`cargo test`) + 23 Vitest tests (`npm test`) |
 | Production-ready architecture | Typed RPC layer, env-driven config, deterministic deployments, storage TTL management, defensive auth |
