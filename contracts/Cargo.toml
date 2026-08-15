@@ -7,7 +7,7 @@ version = "1.0.0"
 edition = "2021"
 rust-version = "1.81"
 license = "MIT"
-repository = "https://github.com/your-org/crowdfundx"
+repository = "https://github.com/xeu03/crowdfundx"
 
 [workspace.dependencies]
 soroban-sdk = "27.0.6"

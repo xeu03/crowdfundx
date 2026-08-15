@@ -57,7 +57,7 @@ export default function App() {
         <footer className="footer">
           <div className="container">
             Built on <a href="https://stellar.org/soroban">Stellar Soroban</a> ·{' '}
-            <a href="https://github.com/your-org/crowdfundx">GitHub</a>
+            <a href="https://github.com/xeu03/crowdfundx">GitHub</a>
           </div>
         </footer>
       </HashRouter>

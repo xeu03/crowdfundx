@@ -5,7 +5,7 @@
 > inter-contract communication, live event streaming, a React frontend,
 > full test suites, and CI/CD pipelines.
 
-<!-- ═══════════════════ Submission links (fill in before submitting) ═══════════════════ -->
+<!-- ═══════════════════ Submission checklist ═══════════════════ -->
 
 | Checklist item | Link |
 | --- | --- |
@@ -81,7 +81,7 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for contract-level details an
 | CI/CD pipeline | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) + [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) |
 | Deployment workflow | [`scripts/deploy.sh`](scripts/deploy.sh) + GitHub Actions deploy job |
 | Error handling & loading states | ErrorBoundary, toast system, skeleton loaders, per-action busy states, RPC retries |
-| Tests for contracts & frontend | 24 Rust integration tests (`cargo test`) + 23 Vitest tests (`npm test`) |
+| Tests for contracts & frontend | 24 Rust integration tests (`cargo test`) + 24 Vitest tests (`npm test`) |
 | Production-ready architecture | Typed RPC layer, env-driven config, deterministic deployments, storage TTL management, defensive auth |
 | Documentation & demo | This README + docs/ + deploy script demo mode |
 
@@ -115,7 +115,7 @@ interaction (mint → create campaign → contribute), and writes:
 cd frontend
 npm install
 npm run dev          # http://localhost:5173 (after deploy.sh)
-npm test             # 23 tests
+npm test             # 24 tests
 npm run build        # production bundle
 ```
 
@@ -138,7 +138,7 @@ cargo test
 - **factory (6)**: end-to-end factory→campaign→token round trip, creation fee,
   registry + invoker-auth rejection, campaign ordering, invalid milestone sum
 
-### Frontend — 23 tests
+### Frontend — 24 tests
 
 ```
 cd frontend && npm test
@@ -155,7 +155,7 @@ cd frontend && npm test
 **CI** runs on every push/PR:
 
 - contracts: builds wasm32v1-none, runs `cargo test`
-- frontend: `npm ci`, type-check, 23 tests, production build
+- frontend: `npm ci`, type-check, 24 tests, production build
 
 **Deploy** (workflow_dispatch):
 
