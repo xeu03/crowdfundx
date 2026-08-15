@@ -1,0 +1,106 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: Target network
+        type: choice
+        options: [testnet, mainnet]
+        default: testnet
+      run_demo:
+        description: Run the demo interaction (mint/create/contribute)
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Deploy contracts to Soroban and publish addresses + tx hashes
+  # ---------------------------------------------------------------------------
+  contracts:
+    name: Deploy contracts (${{ inputs.network }})
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.network }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Stellar CLI
+        run: |
+          curl -sL https://github.com/stellar/stellar-cli/releases/latest/download/stellar-cli-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin
+          stellar --version
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: contracts
+
+      - name: Import deployer identity
+        env:
+          DEPLOYER_SECRET: ${{ secrets.DEPLOYER_SECRET }}
+        run: stellar keys add ci-deployer --secret-key "$DEPLOYER_SECRET"
+
+      - name: Deploy + demo
+        env:
+          NETWORK: ${{ inputs.network }}
+          DEPLOYER: ci-deployer
+          DEPLOYER_SECRET: ${{ secrets.DEPLOYER_SECRET }}
+          DEMO: ${{ inputs.run_demo && '1' || '0' }}
+        run: bash scripts/deploy.sh
+
+      - name: Publish deployment.json
+        run: cat deployment.json >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deployment-${{ inputs.network }}
+          path: deployment.json
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 2. Build the frontend against the fresh addresses and publish to Netlify
+  # ---------------------------------------------------------------------------
+  frontend:
+    name: Deploy frontend (Netlify)
+    runs-on: ubuntu-latest
+    needs: contracts
+    environment: ${{ inputs.network }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: deployment-${{ inputs.network }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build with contract addresses
+        working-directory: frontend
+        run: |
+          TOKEN=$(python3 -c "import json;print(json.load(open('../deployment.json'))['token'])")
+          FACTORY=$(python3 -c "import json;print(json.load(open('../deployment.json'))['factory'])")
+          npm ci
+          VITE_TOKEN_ADDRESS="$TOKEN" VITE_FACTORY_ADDRESS="$FACTORY" npm run build
+
+      - name: Publish to Netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: frontend/dist
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "CrowdfundX ${{ inputs.network }} — ${{ github.sha }}"
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 5
