@@ -24,3 +24,6 @@ coverage/
 # Local deployment artifacts
 scripts/.deploy/
 deployment.json
+
+# Soroban test snapshot artifacts
+test_snapshots/

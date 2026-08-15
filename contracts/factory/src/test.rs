@@ -42,6 +42,7 @@ pub struct MilestoneState {
 #[derive(Clone)]
 #[contracttype]
 pub struct CampaignConfigState {
+    pub name: String,
     pub creator: Address,
     pub token: Address,
     pub factory: Address,
@@ -106,6 +107,7 @@ fn test_create_campaign_end_to_end_with_inter_contract_contribution() {
     // Creator deploys a campaign through the factory (inter-contract deploy).
     let campaign_addr = factory_client.create_campaign(
         &creator,
+        &String::from_str(env, "Moonbase One"),
         &s.token,
         &1_000i128,
         &(BASE_TIME + 7 * DAY),
@@ -133,6 +135,7 @@ fn test_create_campaign_end_to_end_with_inter_contract_contribution() {
     // Event on the factory side for the deployment.
     let created_event = CampaignCreatedEvent {
         campaign: campaign_addr.clone(),
+        name: String::from_str(env, "Moonbase One"),
         creator: creator.clone(),
         token: s.token.clone(),
         goal: 1_000,
@@ -180,6 +183,7 @@ fn test_creation_fee_is_charged_in_campaign_token() {
     token_client.mint(&creator, &100);
     factory_client.create_campaign(
         &creator,
+        &String::from_str(env, "Fee Test"),
         &s.token,
         &1_000i128,
         &(BASE_TIME + 7 * DAY),
@@ -238,6 +242,7 @@ fn test_record_contribution_rejects_non_invoker_contract() {
             args: soroban_sdk::vec![
                 &env,
                 creator.into_val(&env),
+                String::from_str(&env, "Invoker Test").into_val(&env),
                 token.into_val(&env),
                 1_000i128.into_val(&env),
                 (BASE_TIME + 7 * DAY).into_val(&env),
@@ -250,6 +255,7 @@ fn test_record_contribution_rejects_non_invoker_contract() {
     let factory_client = FactoryClient::new(&env, &factory);
     let campaign_addr = factory_client.create_campaign(
         &creator,
+        &String::from_str(&env, "Invoker Test"),
         &token,
         &1_000i128,
         &(BASE_TIME + 7 * DAY),
@@ -270,6 +276,7 @@ fn test_campaign_list_ordering_and_multiple_campaigns() {
 
     let first = factory_client.create_campaign(
         &creator,
+        &String::from_str(env, "First"),
         &s.token,
         &500i128,
         &(BASE_TIME + 7 * DAY),
@@ -277,6 +284,7 @@ fn test_campaign_list_ordering_and_multiple_campaigns() {
     );
     let second = factory_client.create_campaign(
         &creator,
+        &String::from_str(env, "Second"),
         &s.token,
         &2_000i128,
         &(BASE_TIME + 14 * DAY),
@@ -303,6 +311,7 @@ fn test_invalid_milestone_sum_rejected_before_deploy() {
     // 400 + 500 ≠ 1000 → rejected without deploying anything.
     factory_client.create_campaign(
         &creator,
+        &String::from_str(env, "Broken"),
         &s.token,
         &1_000i128,
         &(BASE_TIME + 7 * DAY),

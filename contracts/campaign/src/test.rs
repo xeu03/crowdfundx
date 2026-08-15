@@ -44,6 +44,7 @@ fn setup(goal: i128, deadline_offset: u64, milestones: &[i128]) -> Setup {
     let campaign = env.register(
         Campaign,
         CampaignArgs::__constructor(
+            &String::from_str(&env, "Test Campaign"),
             &creator,
             &token,
             &factory,
@@ -280,6 +281,7 @@ fn test_milestones_must_sum_to_goal() {
     let _campaign = env.register(
         Campaign,
         CampaignArgs::__constructor(
+            &String::from_str(&env, "Broken Milestones"),
             &creator,
             &token,
             &factory,

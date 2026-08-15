@@ -18,7 +18,7 @@
 
 use soroban_sdk::{
     contract, contractclient, contracterror, contractevent, contractimpl, contracttype,
-    panic_with_error, Address, BytesN, Env, Vec,
+    panic_with_error, Address, BytesN, Env, String, Vec,
 };
 
 const DAY_IN_LEDGERS: u32 = 17_280;
@@ -32,6 +32,7 @@ const PERSISTENT_THRESHOLD: u32 = 45 * DAY_IN_LEDGERS;
 #[derive(Clone)]
 #[contracttype]
 pub struct CampaignInfo {
+    pub name: String,
     pub address: Address,
     pub creator: Address,
     pub token: Address,
@@ -94,6 +95,7 @@ pub struct ConfigUpdatedEvent {
 pub struct CampaignCreatedEvent {
     #[topic]
     pub campaign: Address,
+    pub name: String,
     pub creator: Address,
     pub token: Address,
     pub goal: i128,
@@ -210,6 +212,7 @@ impl Factory {
     pub fn create_campaign(
         env: Env,
         creator: Address,
+        name: String,
         token: Address,
         goal: i128,
         deadline: u64,
@@ -253,6 +256,7 @@ impl Factory {
             .deploy_v2(
                 wasm,
                 (
+                    name.clone(),
                     creator.clone(),
                     token.clone(),
                     env.current_contract_address(),
@@ -264,6 +268,7 @@ impl Factory {
 
         // Register the campaign.
         let info = CampaignInfo {
+            name,
             address: campaign_addr.clone(),
             creator,
             token,
@@ -288,6 +293,7 @@ impl Factory {
 
         env.events().publish_event(&CampaignCreatedEvent {
             campaign: campaign_addr.clone(),
+            name: info.name.clone(),
             creator: info.creator.clone(),
             token: info.token.clone(),
             goal: info.goal,

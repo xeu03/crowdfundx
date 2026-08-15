@@ -20,7 +20,7 @@
 
 use soroban_sdk::{
     contract, contractclient, contracterror, contractevent, contractimpl, contracttype,
-    panic_with_error, vec, Address, Env, IntoVal, Vec,
+    panic_with_error, vec, Address, Env, IntoVal, String, Vec,
 };
 
 const DAY_IN_LEDGERS: u32 = 17_280;
@@ -54,6 +54,7 @@ pub enum Status {
 #[derive(Clone)]
 #[contracttype]
 pub struct CampaignConfig {
+    pub name: String,
     pub creator: Address,
     pub token: Address,
     pub factory: Address,
@@ -197,6 +198,7 @@ impl Campaign {
     /// campaign via `Deployer::deploy_v2`.
     pub fn __constructor(
         env: Env,
+        name: String,
         creator: Address,
         token: Address,
         factory: Address,
@@ -235,6 +237,7 @@ impl Campaign {
         write_config(
             &env,
             &CampaignConfig {
+                name,
                 creator,
                 token,
                 factory,
