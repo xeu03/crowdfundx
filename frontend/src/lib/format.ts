@@ -38,8 +38,9 @@ export function shortAddress(address: string): string {
 }
 
 /** "3d 4h left", "Expired", etc. relative to `now`. */
-export function timeLeft(deadline: number, now = Date.now()): string {
-  const diff = deadline * 1000 - now;
+export function timeLeft(deadline: number | bigint, now = Date.now()): string {
+  // Contract u64 values arrive as BigInt — coerce defensively.
+  const diff = Number(deadline) * 1000 - now;
   if (diff <= 0) return 'Ended';
   const days = Math.floor(diff / 86_400_000);
   const hours = Math.floor((diff % 86_400_000) / 3_600_000);
@@ -50,8 +51,8 @@ export function timeLeft(deadline: number, now = Date.now()): string {
 }
 
 /** "Aug 15, 2026" style deadline. */
-export function formatDeadline(deadline: number): string {
-  return new Date(deadline * 1000).toLocaleDateString(undefined, {
+export function formatDeadline(deadline: number | bigint): string {
+  return new Date(Number(deadline) * 1000).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

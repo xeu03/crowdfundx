@@ -138,15 +138,29 @@ export async function fetchFactoryStats(): Promise<FactoryStats> {
   return { campaignCount: count, totalRaised, creationFee: fee };
 }
 
+/**
+ * The RPC decodes u64 contract values as BigInt. The UI treats ledger
+ * timestamps as JS numbers, so coerce them at the data boundary.
+ */
+const asNumber = (v: unknown): number => Number(v as number | bigint);
+
 export async function fetchCampaigns(): Promise<CampaignInfo[]> {
-  return simulateRead<CampaignInfo[]>(FACTORY_ADDRESS, 'get_campaigns');
+  const raw = await simulateRead<CampaignInfo[]>(FACTORY_ADDRESS, 'get_campaigns');
+  return raw.map((info) => ({
+    ...info,
+    deadline: asNumber(info.deadline),
+    created_at: asNumber(info.created_at),
+  }));
 }
 
 export async function fetchCampaignState(campaignId: string): Promise<CampaignState> {
   const [config, milestones] = await simulateRead<
     [CampaignState['config'], CampaignState['milestones']]
   >(campaignId, 'get_state');
-  return { config, milestones };
+  return {
+    config: { ...config, deadline: asNumber(config.deadline) },
+    milestones,
+  };
 }
 
 export async function fetchContribution(campaignId: string, contributor: string): Promise<bigint> {

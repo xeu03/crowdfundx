@@ -63,6 +63,14 @@ describe('timeLeft', () => {
   it('reports ended campaigns', () => {
     expect(timeLeft(now / 1000 - 1, now)).toBe('Ended');
   });
+
+  it('accepts BigInt deadlines from the RPC (u64 regression)', () => {
+    // Contract u64 values arrive as BigInt — must not throw
+    // "Cannot mix BigInt and other types".
+    expect(timeLeft(BigInt(now / 1000 + 3_600), now)).toBe('1h 0m left');
+    expect(timeLeft(BigInt(now / 1000 - 1), now)).toBe('Ended');
+    expect(formatDeadline(BigInt(1_782_547_200))).toMatch(/\d{4}/);
+  });
 });
 
 describe('formatDeadline', () => {
