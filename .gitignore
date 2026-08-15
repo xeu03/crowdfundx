@@ -1,0 +1,26 @@
+# Rust / Soroban
+target/
+wasm/
+*.wasm
+
+# Node / Frontend
+node_modules/
+dist/
+coverage/
+*.local
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.secret
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local deployment artifacts
+scripts/.deploy/
+deployment.json
