@@ -9,10 +9,10 @@
 
 | Checklist item | Link |
 | --- | --- |
-| Public GitHub repository | *— to be filled —* |
+| Public GitHub repository | https://github.com/xeu03/crowdfundx |
 | Live demo (Vercel/Netlify) | *— to be filled —* |
-| Contract deployment address (factory) | *— to be filled —* |
-| Transaction hash (contract interaction) | *— to be filled —* |
+| Contract deployment address (factory) | [`CB46HW3YW5XVMBQLHOSKTLQ5SQBPDPIUDPG2U6JOCDGMHLBNLI5PHJO7`](https://stellar.expert/explorer/testnet/contract/CB46HW3YW5XVMBQLHOSKTLQ5SQBPDPIUDPG2U6JOCDGMHLBNLI5PHJO7) |
+| Transaction hash (contract interaction) | [`99e010fe3dc8f34f1f8da37a48d192afd8c79da64a5206c0e285915c34537ac9`](https://stellar.expert/explorer/testnet/tx/99e010fe3dc8f34f1f8da37a48d192afd8c79da64a5206c0e285915c34537ac9) (contribution hitting the goal) |
 | Demo video (1–2 min) | *— to be filled —* |
 
 <!-- ════════════════════════════════════════════════════════════════════════════════════ -->

@@ -100,13 +100,14 @@ CONTRIBUTE_TX=""
 
 if [ "$DEMO" = "1" ]; then
   DEADLINE_UNIX="$(( $(date +%s) + 7 * 86400 ))"
-  GOAL_RAW=10000000000        # 1000 CFX (7 decimals)
-  MILESTONES_RAW='[5000000000,5000000000]'
+  MINT_RAW=20000000000         # 2000 CFX (7 decimals) — covers the creation fee
+  GOAL_RAW=10000000000         # 1000 CFX goal
+  MILESTONES_RAW='["5000000000","5000000000"]'   # Vec<i128> args take JSON strings
 
-  log "Demo: minting 1000 CFX to deployer"
+  log "Demo: minting 2000 CFX to deployer"
   MINT_OUT="$(stellar contract invoke \
     --id "$TOKEN_ID" --source-account "$DEPLOYER" --network "$NETWORK" \
-    -- mint --to "$DEPLOYER_ADDR" --amount "$GOAL_RAW")"
+    -- mint --to "$DEPLOYER_ADDR" --amount "$MINT_RAW" 2>&1)"
   MINT_TX="$(printf '%s\n' "$MINT_OUT" | grep -oE '[0-9a-f]{64}' | head -1 || true)"
   ok "Mint tx: ${MINT_TX:-n/a}"
 
@@ -115,7 +116,7 @@ if [ "$DEMO" = "1" ]; then
     --id "$FACTORY_ID" --source-account "$DEPLOYER" --network "$NETWORK" \
     -- create_campaign --creator "$DEPLOYER_ADDR" --name "Moonbase One" \
        --token "$TOKEN_ID" --goal "$GOAL_RAW" --deadline "$DEADLINE_UNIX" \
-       --milestones "$MILESTONES_RAW")"
+       --milestones "$MILESTONES_RAW" 2>&1)"
   CREATE_TX="$(printf '%s\n' "$CREATE_OUT" | grep -oE '[0-9a-f]{64}' | head -1 || true)"
   CAMPAIGN_ID="$(printf '%s\n' "$CREATE_OUT" | grep -oE 'C[0-9A-Z]{55}' | tail -1 || true)"
   ok "Create campaign tx: ${CREATE_TX:-n/a}"
@@ -125,7 +126,7 @@ if [ "$DEMO" = "1" ]; then
     log "Demo: contributing 1000 CFX (hits the goal)"
     CONTRIBUTE_OUT="$(stellar contract invoke \
       --id "$CAMPAIGN_ID" --source-account "$DEPLOYER" --network "$NETWORK" \
-      -- contribute --from "$DEPLOYER_ADDR" --amount "$GOAL_RAW")"
+      -- contribute --from "$DEPLOYER_ADDR" --amount "$GOAL_RAW" 2>&1)"
     CONTRIBUTE_TX="$(printf '%s\n' "$CONTRIBUTE_OUT" | grep -oE '[0-9a-f]{64}' | head -1 || true)"
     ok "Contribute tx: ${CONTRIBUTE_TX:-n/a}"
   fi
@@ -152,9 +153,16 @@ cat > "$ROOT/deployment.json" <<EOF
 EOF
 ok "Wrote deployment.json"
 
+case "$NETWORK" in
+  mainnet)  PASSPHRASE="Public Global Stellar Network ; September 2015"; RPC="https://soroban-mainnet.stellar.org" ;;
+  futurenet) PASSPHRASE="Test SDF Network ; September 2015"; RPC="https://rpc-futurenet.stellar.org" ;;
+  local)    PASSPHRASE="Standalone Network ; February 2017"; RPC="http://localhost:8000/soroban/rpc" ;;
+  *)        PASSPHRASE="Test SDF Network ; September 2015"; RPC="https://soroban-testnet.stellar.org" ;;
+esac
+
 cat > "$ROOT/frontend/.env.local" <<EOF
-VITE_NETWORK_PASSPHRASE=$(stellar network ls 2>/dev/null | grep -E "^\*? *$NETWORK " | awk '{print $2}' || echo "Test SDF Network ; September 2015")
-VITE_RPC_URL=https://soroban-testnet.stellar.org
+VITE_NETWORK_PASSPHRASE=$PASSPHRASE
+VITE_RPC_URL=$RPC
 VITE_FACTORY_ADDRESS=$FACTORY_ID
 VITE_TOKEN_ADDRESS=$TOKEN_ID
 EOF

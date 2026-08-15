@@ -31,7 +31,7 @@ What it does:
 
 ```bash
 # Read factory stats (simulated view call)
-stellar contract invoke --id <factory> --send=no --network testnet -- get_stats
+stellar contract invoke --id <factory> --source-account <identity> --send no --network testnet -- get_stats
 
 # Stream live events (optional jq)
 stellar events --start-ledger 1 --contract <factory> --network testnet
