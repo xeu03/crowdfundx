@@ -71,6 +71,34 @@ docs/                 Architecture & deployment deep dives
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for contract-level details and
 [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the full deployment runbook.
 
+## Frontend integration
+
+The React dApp (`frontend/`) is wired to the deployed contracts on testnet via
+`@stellar/stellar-sdk` and Freighter — full evidence and code excerpts in
+[`FRONTEND.md`](FRONTEND.md).
+
+- **Wallet**: `frontend/src/lib/wallet.ts` — Freighter
+  `isConnected` → `requestAccess` → `getAddress` + `isAllowed`/`setAllowed`;
+  `useWallet.ts` manages connect/disconnect state.
+- **Transactions**: `frontend/src/lib/contracts.ts` — every action runs
+  `TransactionBuilder` → `prepareTransaction` → Freighter `signTransaction` →
+  `sendTransaction` → poll, with `nativeToScVal`/`scValToNative` conversions.
+- **Contract calls per screen** (arg order matches the Rust contracts):
+
+| UI action | Contract call |
+| --- | --- |
+| Explore grid / stats | factory `get_campaigns`, `get_stats` |
+| Campaign page | campaign `get_state`, `get_contribution` |
+| Back a campaign | campaign `contribute(from, amount)` |
+| Release milestone | campaign `release_milestone(index)` |
+| Claim refund | campaign `refund(contributor)` |
+| Close failed campaign | campaign `close_failed()` |
+| Extend deadline | campaign `extend_deadline(new_deadline)` |
+| Launch campaign | factory `create_campaign(creator, name, token, goal, deadline, milestones)` |
+
+- **Live updates**: `useEventStream.ts` streams `getEvents` with cursor
+  pagination into the UI.
+
 ## Requirements coverage
 
 | Requirement | Where |

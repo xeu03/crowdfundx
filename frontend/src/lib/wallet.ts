@@ -2,6 +2,8 @@ import {
   isConnected,
   requestAccess,
   getAddress,
+  isAllowed,
+  setAllowed,
 } from '@stellar/freighter-api';
 
 export class WalletError extends Error {
@@ -26,6 +28,13 @@ export async function connectWallet(): Promise<string> {
 
   try {
     const { address } = await requestAccess();
+    // Persist permission so the extension auto-allows future connections.
+    try {
+      const { isAllowed: allowed } = await isAllowed();
+      if (!allowed) await setAllowed();
+    } catch {
+      // Non-fatal: older extension versions may not expose isAllowed/setAllowed.
+    }
     return address;
   } catch {
     throw new WalletError(REJECTED_HINT);
